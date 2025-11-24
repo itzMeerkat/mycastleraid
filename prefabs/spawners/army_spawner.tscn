@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://botxnf3h0mgmk"]
+
+[ext_resource type="Script" uid="uid://bgmmsvamq8tb0" path="res://prefabs/spawners/army_spawner.gd" id="1_qhk40"]
+
+[node name="ArmySpawner" type="Node2D"]
+script = ExtResource("1_qhk40")

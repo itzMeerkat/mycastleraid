@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://duy5tr7j258ew"]
+
+[ext_resource type="Script" uid="uid://cta3c07lm0rhv" path="res://units/base/sensing_component/sensing_component.gd" id="1_opq1u"]
+
+[node name="SensingComponent" type="Node2D"]
+script = ExtResource("1_opq1u")

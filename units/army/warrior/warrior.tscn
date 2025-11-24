@@ -1,0 +1,335 @@
+[gd_scene load_steps=44 format=3 uid="uid://bbc1m5haqovxe"]
+
+[ext_resource type="Script" uid="uid://c8j5a8julimpb" path="res://units/army/warrior/warrior.gd" id="1_yhlwg"]
+[ext_resource type="Texture2D" uid="uid://bd1rfonnssuks" path="res://assets/Units/Blue Units/Warrior/all-in-one.png" id="3_facxs"]
+[ext_resource type="PackedScene" uid="uid://duy5tr7j258ew" path="res://units/base/sensing_component/sensing_component.tscn" id="3_kt5po"]
+[ext_resource type="Script" uid="uid://b03nnbm5724gh" path="res://ai/tasks/obtain_target.gd" id="3_nbyxu"]
+[ext_resource type="Script" uid="uid://db6ivkch5o648" path="res://ai/tasks/melee_attack.gd" id="4_o8pyd"]
+[ext_resource type="Script" uid="uid://8oatoslfq7ib" path="res://ai/tasks/has_target_condition.gd" id="4_qdhqa"]
+[ext_resource type="Script" uid="uid://b76njil8jswwi" path="res://ai/tasks/move_to_target.gd" id="5_o8pyd"]
+[ext_resource type="PackedScene" uid="uid://bnfphdefo4dqf" path="res://units/base/movement_component/movement_component.tscn" id="7_dexfl"]
+[ext_resource type="Script" uid="uid://m7m54i2sgim5" path="res://ai/tasks/patrol.gd" id="7_i1jmd"]
+[ext_resource type="PackedScene" uid="uid://bq2twcinyibi" path="res://units/base/melee_attack_component/melee_attack_component.tscn" id="8_ry11k"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_o8pyd"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_yhlwg"]
+radius = 60.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_facxs"]
+radius = 450.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_gamgc"]
+radius = 20.0
+height = 70.0
+
+[sub_resource type="BlackboardPlan" id="BlackboardPlan_yhlwg"]
+
+[sub_resource type="BTAction" id="BTAction_gamgc"]
+script = ExtResource("3_nbyxu")
+
+[sub_resource type="BTAction" id="BTAction_i1jmd"]
+script = ExtResource("4_qdhqa")
+
+[sub_resource type="BTAction" id="BTAction_nbnwi"]
+script = ExtResource("5_o8pyd")
+movementSpeed = 300.0
+
+[sub_resource type="BTAction" id="BTAction_odsno"]
+script = ExtResource("4_o8pyd")
+
+[sub_resource type="BTSequence" id="BTSequence_nbnwi"]
+custom_name = "Attack sequence"
+children = [SubResource("BTAction_gamgc"), SubResource("BTAction_i1jmd"), SubResource("BTAction_nbnwi"), SubResource("BTAction_odsno")]
+
+[sub_resource type="BTAction" id="BTAction_ne0mo"]
+script = ExtResource("7_i1jmd")
+
+[sub_resource type="BTSequence" id="BTSequence_7bsuc"]
+custom_name = "Move sequence"
+children = [SubResource("BTAction_ne0mo")]
+
+[sub_resource type="BTSelector" id="BTSelector_7bsuc"]
+children = [SubResource("BTSequence_nbnwi"), SubResource("BTSequence_7bsuc")]
+
+[sub_resource type="BehaviorTree" id="BehaviorTree_facxs"]
+blackboard_plan = SubResource("BlackboardPlan_yhlwg")
+root_task = SubResource("BTSelector_7bsuc")
+
+[sub_resource type="BlackboardPlan" id="BlackboardPlan_nbyxu"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_facxs"]
+animation = &"blue_attack_1"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_gamgc"]
+animation = &"blue_idle"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_odsno"]
+animation = &"blue_run"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_nbnwi"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_7bsuc"]
+advance_mode = 2
+advance_expression = "is_running == true and is_attacking == false"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_odsno"]
+advance_mode = 2
+advance_expression = "is_running == false"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_o8pyd"]
+advance_mode = 2
+advance_expression = "is_attacking == true"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_jwea3"]
+switch_mode = 2
+advance_mode = 2
+advance_expression = "is_attacking == false"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_i1jmd"]
+advance_mode = 2
+advance_expression = "is_attacking == true"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_ne0mo"]
+switch_mode = 2
+advance_mode = 2
+advance_expression = "is_attacking == false and is_running == true"
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_facxs"]
+states/Start/position = Vector2(109, 95)
+states/blue_attack_1/node = SubResource("AnimationNodeAnimation_facxs")
+states/blue_attack_1/position = Vector2(491, -88)
+states/blue_idle/node = SubResource("AnimationNodeAnimation_gamgc")
+states/blue_idle/position = Vector2(375, 127)
+states/blue_run/node = SubResource("AnimationNodeAnimation_odsno")
+states/blue_run/position = Vector2(579, 127)
+transitions = ["Start", "blue_idle", SubResource("AnimationNodeStateMachineTransition_nbnwi"), "blue_idle", "blue_run", SubResource("AnimationNodeStateMachineTransition_7bsuc"), "blue_run", "blue_idle", SubResource("AnimationNodeStateMachineTransition_odsno"), "blue_idle", "blue_attack_1", SubResource("AnimationNodeStateMachineTransition_o8pyd"), "blue_attack_1", "blue_idle", SubResource("AnimationNodeStateMachineTransition_jwea3"), "blue_run", "blue_attack_1", SubResource("AnimationNodeStateMachineTransition_i1jmd"), "blue_attack_1", "blue_run", SubResource("AnimationNodeStateMachineTransition_ne0mo")]
+graph_offset = Vector2(0, -160)
+
+[sub_resource type="Animation" id="Animation_nbyxu"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:frame_coords")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [Vector2i(0, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_facxs"]
+resource_name = "blue_attack_1"
+length = 0.4
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame_coords")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(3, 0)]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.2, 0.4),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [],
+"method": &"active_hitbox"
+}, {
+"args": [],
+"method": &"end_attack_animation"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_o8pyd"]
+resource_name = "blue_attack_2"
+length = 0.4
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame_coords")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [Vector2i(0, 1), Vector2i(1, 1), Vector2i(2, 1), Vector2i(3, 1)]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.2),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"ActiveHitbox"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_gamgc"]
+resource_name = "blue_block"
+length = 0.6
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame_coords")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [Vector2i(0, 2), Vector2i(1, 2), Vector2i(2, 2), Vector2i(3, 2), Vector2i(4, 2), Vector2i(5, 2)]
+}
+
+[sub_resource type="Animation" id="Animation_odsno"]
+resource_name = "blue_idle"
+length = 0.8
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame_coords")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [Vector2i(0, 3), Vector2i(1, 3), Vector2i(2, 3), Vector2i(3, 3), Vector2i(4, 3), Vector2i(5, 3), Vector2i(6, 3), Vector2i(7, 3)]
+}
+
+[sub_resource type="Animation" id="Animation_nbnwi"]
+resource_name = "blue_run"
+length = 0.6
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame_coords")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [Vector2i(0, 4), Vector2i(1, 4), Vector2i(2, 4), Vector2i(3, 4), Vector2i(4, 4), Vector2i(5, 4)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_o8pyd"]
+_data = {
+&"RESET": SubResource("Animation_nbyxu"),
+&"blue_attack_1": SubResource("Animation_facxs"),
+&"blue_attack_2": SubResource("Animation_o8pyd"),
+&"blue_block": SubResource("Animation_gamgc"),
+&"blue_idle": SubResource("Animation_odsno"),
+&"blue_run": SubResource("Animation_nbnwi")
+}
+
+[node name="Warrior" type="CharacterBody2D"]
+z_index = 10
+script = ExtResource("1_yhlwg")
+
+[node name="BodyCollider" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_o8pyd")
+
+[node name="HP Bar" type="ProgressBar" parent="."]
+offset_left = 37.0
+offset_top = -57.0
+offset_right = 44.046806
+offset_bottom = 20.272308
+rotation = 1.5707964
+max_value = 30.0
+step = 1.0
+value = 30.0
+fill_mode = 3
+show_percentage = false
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("3_facxs")
+hframes = 8
+vframes = 5
+frame = 8
+
+[node name="Hitbox" type="Area2D" parent="Sprite2D"]
+collision_layer = 4
+collision_mask = 2
+
+[node name="HitboxCollision" type="CollisionShape2D" parent="Sprite2D/Hitbox"]
+rotation = 1.5707964
+shape = SubResource("CircleShape2D_yhlwg")
+
+[node name="DetectBox" type="Area2D" parent="Sprite2D"]
+
+[node name="DetectBoxCollision" type="CollisionShape2D" parent="Sprite2D/DetectBox"]
+shape = SubResource("CircleShape2D_facxs")
+
+[node name="HurtBox" type="Area2D" parent="Sprite2D"]
+collision_layer = 2
+
+[node name="HurtBoxCollision" type="CollisionShape2D" parent="Sprite2D/HurtBox"]
+shape = SubResource("CapsuleShape2D_gamgc")
+
+[node name="BTPlayer" type="BTPlayer" parent="."]
+behavior_tree = SubResource("BehaviorTree_facxs")
+blackboard_plan = SubResource("BlackboardPlan_nbyxu")
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+tree_root = SubResource("AnimationNodeStateMachine_facxs")
+advance_expression_base_node = NodePath("..")
+anim_player = NodePath("../AnimationPlayer")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_o8pyd")
+}
+
+[node name="SensingComponent" parent="." node_paths=PackedStringArray("detectbox_area2d") instance=ExtResource("3_kt5po")]
+detectbox_area2d = NodePath("../Sprite2D/DetectBox")
+
+[node name="MovementComponent" parent="." node_paths=PackedStringArray("character_body") instance=ExtResource("7_dexfl")]
+character_body = NodePath("..")
+baseSpeed = 300.0
+
+[node name="MeleeAttackComponent" parent="." node_paths=PackedStringArray("hitbox_area2d", "hurtbox_area2d") instance=ExtResource("8_ry11k")]
+hitbox_area2d = NodePath("../Sprite2D/Hitbox")
+hurtbox_area2d = NodePath("../Sprite2D/HurtBox")
+base_damage = 10
+base_attack_range = 60.0
+base_cooldown = 1000
