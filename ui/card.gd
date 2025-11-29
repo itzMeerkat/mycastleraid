@@ -1,8 +1,9 @@
 # Card.gd
 extends TextureRect
 
+class_name Card
 # 定义一个信号，用于通知手牌 Deck 脚本，卡牌已被成功放置并需要移除
-#signal card_removed(card_node)
+signal card_removed(card_node)
 
 # 假设的卡牌数据，您需要根据实际游戏逻辑填充
 var card_data = {
@@ -25,19 +26,66 @@ func _ready():
 
 # 1. 重写 _get_drag_data: 当用户开始拖拽时调用
 func _get_drag_data(_position):
-	# 如果处于禁用状态，则不允许拖拽
-	if mouse_filter == MOUSE_FILTER_IGNORE:
-		return null
-
-	# 创建一个用于跟随鼠标的预览节点
-	var drag_preview = TextureRect.new()
-	drag_preview.texture = texture
-	# 调整预览尺寸
-	drag_preview.custom_minimum_size = size * 0.8
-	drag_preview.expand_mode = TextureRect.EXPAND_IGNORE_SIZE 
+	print("drag begin")
+	## 如果处于禁用状态，则不允许拖拽
+	##if mouse_filter == MOUSE_FILTER_IGNORE:
+		##return null
+#
+	## 创建一个用于跟随鼠标的预览节点
+	##var drag_preview = TextureRect.new()
+	##drag_preview.texture = texture
+	### 调整预览尺寸
+	##drag_preview.custom_minimum_size = size * 0.8
+	##drag_preview.expand_mode = TextureRect.EXPAND_IGNORE_SIZE 
+	#
+	#return card_data
+	# 1. 准备数据（传自己过去，方便接收者处理）
+	var data = self
+	
+	# 2. 创建视觉替身 (Preview)
+	# 我们可以直接复制一个 TextureRect
+	var preview = Card.new()
+	preview.texture = texture
+	preview.material = material
+	preview.expand_mode = expand_mode
+	preview.size = size
+	# 稍微旋转一点，增加“抓取感”
+	#preview.rotation_degrees = 5 
+	
+	# 3. 设置 Preview 的属性
+	# 这一步是为了让 Preview 不要居中于鼠标，而是对齐你点击的位置
+	# 这样才像“直接抓取”
+	preview.position = -_position 
+	
+	# 创建一个容器来承载 Preview（为了能应用偏移量）
+	var c = Control.new()
+	c.add_child(preview)
+	
+	# 设置拖拽预览，并强制不透明（默认是半透明的）
+	set_drag_preview(c) 
+	
+	# 4. 【核心魔法】把自己藏起来！
+	# 看起来就像是你把自己从槽位里拿走了
+	self.modulate.a = 0.0 
 	
 	return card_data
 
+func _can_drop_data(at_position, data):
+	# 这里定义谁能放回来，通常这里写 false，除非支持交换
+	return false
+
+func _notification(what):
+	if what == NOTIFICATION_DRAG_END:
+		# 拖拽结束了（无论有没有成功放下）
+		# 如果没有成功放下（is_drag_successful() == false），我们需要把自己显示回来
+		# 如果成功放下了，通常接收者会把我们移动过去，或者删除我们
+		if not is_drag_successful():
+			var tween = create_tween()
+			tween.tween_property(self, "modulate:a", 1.0, 0.2)
+		else:
+			# 如果成功了，接收方通常会处理我的父节点变更
+			# 但如果只是数据传递，这里也应该恢复显示
+			self.modulate.a = 1.0
 
 var TIME = 0
 var oldpos = Vector2(0,0)
@@ -51,9 +99,10 @@ func _input(event: InputEvent) -> void:
 
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+			mouse_filter = Control.MOUSE_FILTER_PASS
 			is_dragging = false
-	elif event is InputEventMouseMotion:
-		global_position = get_global_mouse_position() + drag_offset
+	#elif event is InputEventMouseMotion:
+		#global_position = get_global_mouse_position() + drag_offset
 
 var drag_offset = Vector2.ZERO
 var is_dragging = false
@@ -63,6 +112,7 @@ func _gui_input(event):
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if event.pressed:
 				is_dragging = true
+				mouse_filter = Control.MOUSE_FILTER_IGNORE
 				drag_offset = global_position - get_global_mouse_position()
 				set_instance_shader_parameter("x_rot", 0)
 				set_instance_shader_parameter("y_rot", 0)
