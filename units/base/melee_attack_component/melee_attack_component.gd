@@ -39,6 +39,7 @@ func start_cooldown():
 	lastAttackTime = Time.get_ticks_msec()
 
 func apply_damage(target: UnitCore):
+	await Utils.random_delay(get_tree())
 	var hits = hitbox_area2d.get_overlapping_areas()
 	for a in hits:
 		if a.get_parent().get_parent() == target:

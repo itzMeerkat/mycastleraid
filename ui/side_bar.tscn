@@ -1,0 +1,32 @@
+[gd_scene load_steps=3 format=3 uid="uid://cfeiwdwnx1yr"]
+
+[ext_resource type="Script" uid="uid://dvv188n6wk46y" path="res://ui/side_bar.gd" id="1_lq5gm"]
+[ext_resource type="Script" uid="uid://bn4bpm1gdxwuq" path="res://ui/control.gd" id="2_m3fg3"]
+
+[node name="SideBar" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_lq5gm")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 200.0
+
+[node name="Button" type="Button" parent="Panel"]
+layout_mode = 0
+offset_left = 200.0
+offset_right = 225.0
+offset_bottom = 60.0
+text = "toggle"
+
+[node name="Control" type="Control" parent="Panel"]
+anchors_preset = 0
+offset_right = 200.0
+offset_bottom = 199.0
+script = ExtResource("2_m3fg3")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/Control"]
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 200.0

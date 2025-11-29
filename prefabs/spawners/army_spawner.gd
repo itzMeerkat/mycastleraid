@@ -12,7 +12,7 @@ var max_spawn = 2
 var k = 0
 
 func _ready() -> void:
-	countdownManager.RegisterNewCountdown("spawn", 2, true)
+	countdownManager.RegisterNewCountdown("spawn", 5, true)
 	for o in waypointsObjs:
 		waypoints.append(o.global_position)
 

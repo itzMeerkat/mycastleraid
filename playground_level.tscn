@@ -1,7 +1,10 @@
-[gd_scene load_steps=3 format=4 uid="uid://oxrdrvt00r4b"]
+[gd_scene load_steps=6 format=4 uid="uid://oxrdrvt00r4b"]
 
 [ext_resource type="TileSet" uid="uid://c7ffydrmj3lh2" path="res://playground_level.tres" id="1_u0rxl"]
 [ext_resource type="PackedScene" uid="uid://botxnf3h0mgmk" path="res://prefabs/spawners/army_spawner.tscn" id="3_417bl"]
+[ext_resource type="PackedScene" uid="uid://cfeiwdwnx1yr" path="res://ui/side_bar.tscn" id="3_njkhl"]
+[ext_resource type="PackedScene" uid="uid://ceifs0yggjqk5" path="res://ui/card_deck.tscn" id="4_qaedc"]
+[ext_resource type="PackedScene" uid="uid://ctetya68hwphv" path="res://ui/card.tscn" id="5_67ln6"]
 
 [node name="PlaygroundLevel" type="TileMapLayer"]
 y_sort_enabled = true
@@ -19,3 +22,17 @@ y_sort_enabled = true
 position = Vector2(1055, 315)
 faction_id = 2
 waypointsObjs = [NodePath("../ArmySpawner")]
+
+[node name="SideBar" parent="." instance=ExtResource("3_njkhl")]
+z_index = 50
+
+[node name="CardDeck" parent="." instance=ExtResource("4_qaedc")]
+z_index = 50
+offset_left = 500.0
+offset_top = 500.0
+offset_right = 500.0
+offset_bottom = 500.0
+
+[node name="TextureRect" parent="CardDeck" instance=ExtResource("5_67ln6")]
+z_index = 50
+layout_mode = 0

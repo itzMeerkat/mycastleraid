@@ -1,0 +1,14 @@
+[gd_scene load_steps=4 format=3 uid="uid://ctetya68hwphv"]
+
+[ext_resource type="Material" uid="uid://we5ccco1qj74" path="res://ui/card_tilt_material.tres" id="1_1dhi4"]
+[ext_resource type="Texture2D" uid="uid://d1lfx0dk5wus2" path="res://card.png" id="1_5giai"]
+[ext_resource type="Script" uid="uid://g8gpsr325qv1" path="res://ui/card.gd" id="2_gx6tf"]
+
+[node name="TextureRect" type="TextureRect"]
+material = ExtResource("1_1dhi4")
+offset_right = 260.0
+offset_bottom = 400.0
+texture = ExtResource("1_5giai")
+script = ExtResource("2_gx6tf")
+
+[node name="Marker2D" type="Marker2D" parent="."]

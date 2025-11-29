@@ -1,0 +1,14 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://we5ccco1qj74"]
+
+[ext_resource type="Shader" uid="uid://clhg0mhwbf8db" path="res://ui/card.gdshader" id="1_f0khc"]
+
+[resource]
+shader = ExtResource("1_f0khc")
+shader_parameter/mouse_screen_pos = Vector2(200, 20)
+shader_parameter/hovering = 1.0
+shader_parameter/screen_scale = 1.0
+shader_parameter/fov = 90.0
+shader_parameter/cull_back = true
+shader_parameter/y_rot = 10.640009055399986
+shader_parameter/x_rot = 10.640009055399986
+shader_parameter/inset = 0.0

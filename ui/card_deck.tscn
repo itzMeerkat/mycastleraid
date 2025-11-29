@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://ceifs0yggjqk5"]
+
+[node name="CardDeck" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer"]
+layout_mode = 2
